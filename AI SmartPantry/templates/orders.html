@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Order History - E-Commerce Store{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-box me-2"></i>Order History
+        </h1>
+    </div>
+</div>
+
+{% if orders %}
+<div class="row">
+    <div class="col-12">
+        {% for order in orders %}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Order #{{ order['order_id'] }}</h5>
+                    <small class="text-muted">{{ order['order_date'] }}</small>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-success">Completed</span>
+                    <h5 class="mb-0 text-primary">${{ "%.2f"|format(order['total']) }}</h5>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order['items'] %}
+                            <tr>
+                                <td>{{ item['product_name'] }}</td>
+                                <td>${{ "%.2f"|format(item['price']) }}</td>
+                                <td>{{ item['quantity'] }}</td>
+                                <td>${{ "%.2f"|format(item['total']) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-shopping-bag me-1"></i>Shop Again
+    </a>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+    <h3 class="text-muted">No Orders Yet</h3>
+    <p class="text-muted">You haven't placed any orders. Start shopping to see your order history here.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-shopping-bag me-1"></i>Start Shopping
+    </a>
+</div>
+{% endif %}
+{% endblock %}

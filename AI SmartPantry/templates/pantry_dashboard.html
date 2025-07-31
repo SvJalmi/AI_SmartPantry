@@ -1,0 +1,594 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Pantry Dashboard - E-Commerce Store{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <!-- Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h1 class="mb-2">
+                        <i class="fas fa-warehouse me-2"></i>Smart Pantry Dashboard
+                    </h1>
+                    <p class="text-muted">Manage your pantry items, track expiry dates, and get smart suggestions</p>
+                </div>
+            </div>
+
+            <!-- Search and Scan Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-search me-2"></i>Search & Scan Products
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="searchInput" 
+                                               placeholder="Search products or scan barcode...">
+                                        <button class="btn btn-primary" type="button" id="searchBtn">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-success w-100" id="scanBtn">
+                                        <i class="fas fa-camera me-2"></i>Scan Barcode
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Storage Organization Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tags me-2"></i>Storage Organization
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Order Selection -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="orderSelect" class="form-label">
+                                        <i class="fas fa-shopping-cart me-1"></i>Select Order:
+                                    </label>
+                                    <select class="form-select" id="orderSelect" onchange="loadOrderItems()">
+                                        <option value="">Select an order...</option>
+                                        {% for order in orders %}
+                                        <option value="{{ order.order_id }}" 
+                                                {% if loop.last %}selected{% endif %}>
+                                            Order #{{ order.order_id }} - {{ order.order_date }} ({{ order['items']|length }} items)
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <i class="fas fa-filter me-1"></i>Filter by Storage:
+                                    </label>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button class="btn btn-outline-primary btn-sm storage-tag" 
+                                                data-tag="Refrigerator">
+                                            <i class="fas fa-snowflake me-1"></i>Refrigerator
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm storage-tag" 
+                                                data-tag="Freezer">
+                                            <i class="fas fa-ice-cream me-1"></i>Freezer
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm storage-tag" 
+                                                data-tag="Pantry">
+                                            <i class="fas fa-archive me-1"></i>Pantry
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm storage-tag" 
+                                                data-tag="Counter">
+                                            <i class="fas fa-table me-1"></i>Counter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Order Items Display -->
+                            <div id="orderItems" class="mb-3" style="display: none;">
+                                <h6 class="text-muted mb-2">
+                                    <i class="fas fa-box me-1"></i>Items in Selected Order:
+                                </h6>
+                                <div id="orderItemsList">
+                                    <!-- Order items will be loaded here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Storage Items Display -->
+                            <div id="storageItems">
+                                <!-- Items will be loaded here based on selected tags -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expiry Tracking and Quick Use Sections -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-warning">
+                            <h5 class="mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Expiring Soon (7 Days)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if expiring_items %}
+                                {% for item in expiring_items %}
+                                <div class="mb-3 p-3 border rounded {% if item.urgency == 'critical' %}border-danger bg-danger bg-opacity-10{% elif item.urgency == 'urgent' %}border-warning bg-warning bg-opacity-10{% endif %}">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <strong class="me-2">{{ item.product_name }}</strong>
+                                                {% if item.urgency == 'critical' %}
+                                                <span class="badge bg-danger"><i class="fas fa-exclamation-circle"></i> Critical</span>
+                                                {% elif item.urgency == 'urgent' %}
+                                                <span class="badge bg-warning text-dark"><i class="fas fa-exclamation-triangle"></i> Urgent</span>
+                                                {% elif item.urgency == 'expired' %}
+                                                <span class="badge bg-dark"><i class="fas fa-times-circle"></i> Expired</span>
+                                                {% endif %}
+                                            </div>
+                                            <small class="text-muted">Expires: {{ item.expiry_date.strftime('%Y-%m-%d') if item.expiry_date else 'Unknown' }}</small>
+                                        </div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                    type="button" data-bs-toggle="dropdown">
+                                                Options
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#" onclick="showUseCases('{{ item.product_name }}')">
+                                                    <i class="fas fa-lightbulb me-1"></i>Use Cases
+                                                </a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="showDisposalOptions('{{ item.product_name }}')">
+                                                    <i class="fas fa-recycle me-1"></i>Disposal Options
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Progress Bar -->
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Time remaining:</small>
+                                            <small class="fw-bold {% if item.urgency == 'critical' %}text-danger{% elif item.urgency == 'urgent' %}text-warning{% elif item.urgency == 'expired' %}text-dark{% else %}text-info{% endif %}">
+                                                {{ item.days_label }}
+                                            </small>
+                                        </div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar {{ item.urgency_class }}" 
+                                                 role="progressbar" 
+                                                 style="width: {{ item.progress_percentage }}%"
+                                                 aria-valuenow="{{ item.progress_percentage }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted">No items expiring soon</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-danger">
+                            <h5 class="mb-0">
+                                <i class="fas fa-clock me-2"></i>Use Quickly After Opening
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if quick_use_items %}
+                                {% for item in quick_use_items %}
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                                    <div>
+                                        <strong>{{ item.product_name }}</strong><br>
+                                        <small class="text-muted">{{ item.quick_use_note }}</small>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                type="button" data-bs-toggle="dropdown">
+                                            Options
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#" onclick="showUseCases('{{ item.product_name }}')">
+                                                <i class="fas fa-lightbulb me-1"></i>Recipe Ideas
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="showStorageTips('{{ item.product_name }}')">
+                                                <i class="fas fa-info-circle me-1"></i>Storage Tips
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted">No items requiring quick use</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Restock Suggestions Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-info">
+                            <h5 class="mb-0">
+                                <i class="fas fa-sync-alt me-2"></i>Restock Suggestions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if restock_suggestions %}
+                                <div class="row">
+                                    {% for suggestion in restock_suggestions %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                            <div>
+                                                <strong>{{ suggestion.product_name }}</strong><br>
+                                                <small class="text-muted">{{ suggestion.suggestion }}</small>
+                                            </div>
+                                            <button class="btn btn-sm btn-primary" onclick="addToCart('{{ suggestion.product_name }}')">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No restock suggestions available</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Allergen Management Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-danger">
+                            <h5 class="mb-0 text-white">
+                                <i class="fas fa-exclamation-circle me-2"></i>Allergen Management
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Your Allergens</h6>
+                                    <div id="userAllergens" class="mb-3">
+                                        {% for allergen in user_allergens %}
+                                        <span class="badge bg-danger me-2 mb-2">
+                                            {{ allergen.allergen }}
+                                            <button class="btn-close btn-close-white ms-2" 
+                                                    onclick="removeAllergen('{{ allergen.allergen }}')"></button>
+                                        </span>
+                                        {% endfor %}
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <select class="form-select" id="allergenSelect">
+                                                <option value="">Choose allergen...</option>
+                                                <option value="Lactose">Lactose (Dairy/Milk products)</option>
+                                                <option value="Gluten">Gluten (Wheat/Bread products)</option>
+                                                <option value="Eggs">Eggs</option>
+                                                <option value="Peanuts">Peanuts</option>
+                                                <option value="Tree Nuts">Tree Nuts</option>
+                                                <option value="Soy">Soy</option>
+                                                <option value="Fish">Fish</option>
+                                                <option value="Shellfish">Shellfish</option>
+                                                <option value="Sesame">Sesame</option>
+                                                <option value="Corn">Corn</option>
+                                                <option value="Sulfites">Sulfites</option>
+                                                <option value="Mustard">Mustard</option>
+                                                <option value="Celery">Celery</option>
+                                                <option value="Lupin">Lupin</option>
+                                                <option value="other">Other (specify below)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <button class="btn btn-danger w-100" onclick="addAllergenFromSelect()">Add</button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2" id="customAllergenDiv" style="display: none;">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="customAllergenInput" 
+                                                   placeholder="Enter custom allergen...">
+                                            <button class="btn btn-outline-danger" onclick="addCustomAllergen()">Add Custom</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Pantry Items with Allergens</h6>
+                                    <div id="allergenItems">
+                                        <!-- Items with allergens will be shown here -->
+                                        <p class="text-muted">Loading allergen items...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warranty Management Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-shield-alt me-2"></i>Warranty Management
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if warranty_items %}
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Purchase Date</th>
+                                                <th>Warranty Expiry</th>
+                                                <th>Type</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in warranty_items %}
+                                            <tr>
+                                                <td>{{ item.product_name }}</td>
+                                                <td>{{ item.purchase_date }}</td>
+                                                <td>{{ item.warranty_expiry }}</td>
+                                                <td>{{ item.warranty_type }}</td>
+                                                <td>
+                                                    {% if item.can_extend %}
+                                                    <button class="btn btn-sm btn-primary" 
+                                                            onclick="extendWarranty('{{ item.product_name }}', '{{ item.extension_cost }}')">
+                                                        Extend (${{ item.extension_cost }})
+                                                    </button>
+                                                    {% else %}
+                                                    <span class="text-muted">Not extendable</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">No warranty items found</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="col-lg-3">
+            <div class="sticky-top" style="top: 20px;">
+                <!-- View All Pantry Products -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-boxes me-2"></i>Quick Access
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <button class="list-group-item list-group-item-action" 
+                                    onclick="showAllPantryProducts()" type="button">
+                                <i class="fas fa-cube me-2"></i>View All Pantry Products
+                                <span class="badge bg-primary float-end" id="pantryCount">{{ pantry_items|length }}</span>
+                            </button>
+                            <a href="{{ url_for('orders') }}" class="list-group-item list-group-item-action">
+                                <i class="fas fa-history me-2"></i>Order History
+                                <span class="badge bg-secondary float-end">6</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>Quick Stats
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Expiring Soon:</span>
+                            <span class="badge bg-warning">{{ expiring_items|length }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Items:</span>
+                            <span class="badge bg-info">{{ pantry_items|length }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Allergen Items:</span>
+                            <span class="badge bg-danger" id="allergenCount">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Warranty Items:</span>
+                            <span class="badge bg-success">{{ warranty_items|length }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Benefits -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-heart me-2"></i>Nutrition Overview
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">Pantry Nutrition Analysis</small>
+                            <span class="badge bg-success">{{ nutrition_highlights|length }} Categories</span>
+                        </div>
+                        <div class="nutrition-summary mb-3">
+                            {% if nutrition_highlights %}
+                                {% set categories = nutrition_highlights|map(attribute='category')|list|unique %}
+                                <div class="row g-1">
+                                    {% for category in categories %}
+                                        {% set highlight = nutrition_highlights|selectattr('category', 'equalto', category)|first %}
+                                        <div class="col-6">
+                                            <div class="badge bg-{{ highlight.color }} text-white w-100 py-1" style="font-size: 0.65rem;">
+                                                <i class="{{ highlight.icon }} me-1"></i>{{ category }}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button class="btn btn-success btn-sm w-100" onclick="showCombinedNutritionAnalysis()">
+                            <i class="fas fa-chart-pie me-2"></i>View Complete Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Recent Activity
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="small">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-plus-circle text-success me-2"></i>
+                                <span>Items added from order #6</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                                <span>2 items expiring soon</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                <span>Warranty extended for Laptop</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Camera Modal for Barcode Scanning -->
+<div class="modal fade" id="cameraModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scan Barcode</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="cameraContainer">
+                    <video id="cameraVideo" autoplay style="width: 100%; max-height: 400px;"></video>
+                    <canvas id="cameraCanvas" style="display: none;"></canvas>
+                </div>
+                <div class="mt-3 text-center">
+                    <button class="btn btn-primary" onclick="captureBarcode()">
+                        <i class="fas fa-camera me-2"></i>Capture
+                    </button>
+                    <button class="btn btn-secondary" onclick="stopCamera()">
+                        <i class="fas fa-stop me-2"></i>Stop
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Item Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Item to Pantry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addItemForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="itemName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-control" id="itemCategory">
+                            <option value="dairy">Dairy</option>
+                            <option value="meat">Meat</option>
+                            <option value="vegetables">Vegetables</option>
+                            <option value="fruits">Fruits</option>
+                            <option value="grains">Grains</option>
+                            <option value="electronics">Electronics</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Storage Tags</label>
+                        <input type="text" class="form-control" id="itemTags" 
+                               placeholder="e.g., refrigerator, freezer, pantry">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="itemExpiry">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="itemQuantity" value="1" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add to Pantry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- All Pantry Products Modal -->
+<div class="modal fade" id="allPantryModal" tabindex="-1" aria-labelledby="allPantryModalLabel" aria-hidden="true" style="z-index: 9999;">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="allPantryModalLabel">All Pantry Products</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="allPantryContent">
+                    <p>Initial content - this should change when loaded</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/pantry.js') }}"></script>
+{% endblock %}

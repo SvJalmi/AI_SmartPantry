@@ -1,0 +1,27 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="appleGradient" cx="0.3" cy="0.3" r="0.8">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d63031;stop-opacity:1" />
+    </radialGradient>
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00b894;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00a085;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Apple body -->
+  <ellipse cx="100" cy="120" rx="60" ry="55" fill="url(#appleGradient)" />
+  
+  <!-- Apple indent at top -->
+  <path d="M 80 75 Q 100 65 120 75 Q 110 85 100 85 Q 90 85 80 75" fill="#d63031" />
+  
+  <!-- Stem -->
+  <rect x="98" y="60" width="4" height="20" fill="#8b4513" rx="2" />
+  
+  <!-- Leaf -->
+  <ellipse cx="110" cy="70" rx="8" ry="15" fill="url(#leafGradient)" transform="rotate(30 110 70)" />
+  
+  <!-- Highlight -->
+  <ellipse cx="85" cy="100" rx="15" ry="20" fill="#ff9ff3" opacity="0.3" />
+</svg>

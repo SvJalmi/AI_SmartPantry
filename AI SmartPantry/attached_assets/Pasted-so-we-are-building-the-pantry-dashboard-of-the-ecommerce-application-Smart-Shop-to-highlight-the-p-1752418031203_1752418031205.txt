@@ -1,0 +1,13 @@
+so we are building the pantry dashboard of the ecommerce application (Smart Shop) to highlight the product expiry and storage features along with the product or barcode scanning option also restocking ,allergy and warranty options
+
+we will start by search bar with the option to scan the barcode or the product in it once you select the scan option the camera will be opened and after scanning the product you will be given an option to add it to the pantry.
+
+below this we will be having a storage feature which will help us categorise the product based on the tags. the way this feature works is by helping the people to organise the product faster by categorising them once you select this option it will go through the last orders list of product categorising the product based on the storage tags.one could easily select the tags to get the list of the all products having similar tags.also once you click on the product you will learn about all the other tags of the products .go through the tags below to get the better idea Refrigerate, Freeze, Room Temperature, Cool and Dry Place, Away from Sunlight, Airtight Container, Original Packaging, Cut and Store, Peel and Store, Wash Before Storage, Do Not Wash Before Storing, Blanch Before Freezing, Store Upright, Keep Sealed, Do Not Freeze, Vacuum Seal, Ziplock Bag, Glass Jar, Plastic Container, Store Separately from Strong Odors.
+
+below this we will be having the feature highlighting the list of the products from the pantry expiring within a week or two .this will have an option to see the different use cases of the product and once the product reaches close to the expiry (2-3 days)few  products may have a option on its disposal like selling ,reuse,donate,or ways of disposal.along with this we will highlight the harmful effect of few products incase of severity.below this we will have the list of products Use Within X Days of Opening like milk,etc.
+
+based on the customers behaviour and the product expiry restocking suggestions will be given also the missing requirements of the nutrients can be analyzed to give the suggestions.
+
+the below this we will be having option to select the allergens once selected they will stay as it is usless removed highlighting the products from the pantry to be aware of
+
+atlast we will be having the products along with their warranty detail(date) with a option to extend the warrenty

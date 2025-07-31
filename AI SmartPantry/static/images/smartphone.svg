@@ -1,0 +1,41 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="phoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#636e72;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d3436;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phoneScreenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#74b9ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0984e3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Phone body -->
+  <rect x="70" y="40" width="60" height="120" rx="12" fill="url(#phoneGradient)"/>
+  
+  <!-- Phone screen -->
+  <rect x="75" y="50" width="50" height="100" rx="8" fill="url(#phoneScreenGradient)"/>
+  
+  <!-- Home button -->
+  <circle cx="100" cy="155" r="4" fill="#2d3436"/>
+  
+  <!-- Speaker -->
+  <rect x="85" y="44" width="30" height="3" rx="2" fill="#2d3436"/>
+  
+  <!-- Camera -->
+  <circle cx="115" cy="47" r="2" fill="#2d3436"/>
+  
+  <!-- Screen icons -->
+  <rect x="80" y="60" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  <rect x="92" y="60" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  <rect x="104" y="60" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  <rect x="116" y="60" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  
+  <rect x="80" y="75" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  <rect x="92" y="75" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  <rect x="104" y="75" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  <rect x="116" y="75" width="8" height="8" rx="2" fill="#fff" opacity="0.8"/>
+  
+  <!-- Screen reflection -->
+  <rect x="78" y="55" width="15" height="25" rx="3" fill="#fff" opacity="0.2"/>
+</svg>

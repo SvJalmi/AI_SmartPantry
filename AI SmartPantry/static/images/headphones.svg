@@ -1,0 +1,34 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="headphoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#636e72;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d3436;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Headband -->
+  <path d="M 60 70 Q 100 40 140 70" fill="none" stroke="url(#headphoneGradient)" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Left ear cup -->
+  <circle cx="60" cy="120" r="25" fill="url(#headphoneGradient)"/>
+  <circle cx="60" cy="120" r="18" fill="#2d3436"/>
+  <circle cx="60" cy="120" r="12" fill="#636e72"/>
+  
+  <!-- Right ear cup -->
+  <circle cx="140" cy="120" r="25" fill="url(#headphoneGradient)"/>
+  <circle cx="140" cy="120" r="18" fill="#2d3436"/>
+  <circle cx="140" cy="120" r="12" fill="#636e72"/>
+  
+  <!-- Left connector -->
+  <line x1="60" y1="95" x2="60" y2="75" stroke="#2d3436" stroke-width="4"/>
+  
+  <!-- Right connector -->
+  <line x1="140" y1="95" x2="140" y2="75" stroke="#2d3436" stroke-width="4"/>
+  
+  <!-- Padding on headband -->
+  <rect x="85" y="45" width="30" height="8" rx="4" fill="#2d3436"/>
+  
+  <!-- Brand dot -->
+  <circle cx="60" cy="120" r="3" fill="#74b9ff"/>
+  <circle cx="140" cy="120" r="3" fill="#74b9ff"/>
+</svg>

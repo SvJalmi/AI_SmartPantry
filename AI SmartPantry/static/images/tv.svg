@@ -1,0 +1,41 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tvGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#636e72;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2d3436;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="tvScreenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#74b9ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0984e3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- TV stand base -->
+  <rect x="60" y="160" width="80" height="8" rx="4" fill="url(#tvGradient)"/>
+  
+  <!-- TV stand leg -->
+  <rect x="95" y="150" width="10" height="15" rx="2" fill="url(#tvGradient)"/>
+  
+  <!-- TV body -->
+  <rect x="30" y="50" width="140" height="105" rx="8" fill="url(#tvGradient)"/>
+  
+  <!-- TV screen -->
+  <rect x="38" y="58" width="124" height="89" rx="4" fill="url(#tvScreenGradient)"/>
+  
+  <!-- TV brand logo area -->
+  <rect x="92" y="152" width="16" height="3" rx="1" fill="#636e72"/>
+  
+  <!-- Screen content -->
+  <rect x="45" y="70" width="110" height="3" rx="1" fill="#fff" opacity="0.8"/>
+  <rect x="45" y="80" width="80" height="2" rx="1" fill="#fff" opacity="0.6"/>
+  <rect x="45" y="87" width="90" height="2" rx="1" fill="#fff" opacity="0.6"/>
+  
+  <!-- Play button symbol -->
+  <polygon points="90,110 110,120 90,130" fill="#fff" opacity="0.7"/>
+  
+  <!-- Screen reflection -->
+  <rect x="45" y="65" width="25" height="35" rx="3" fill="#fff" opacity="0.1"/>
+  
+  <!-- Power indicator -->
+  <circle cx="160" cy="145" r="2" fill="#00b894"/>
+</svg>
